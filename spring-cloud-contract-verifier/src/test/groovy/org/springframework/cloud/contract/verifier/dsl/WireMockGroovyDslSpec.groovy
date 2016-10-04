@@ -1628,4 +1628,46 @@ class WireMockGroovyDslSpec extends Specification implements WireMockStubVerifie
 		then:
 			json == ''
 	}
+
+	@Issue('#93')
+	def "should create a stub with multiple parameters"() {
+		given:
+			org.springframework.cloud.contract.spec.Contract groovyDsl = org.springframework.cloud.contract.spec.Contract.make {
+				request {
+					method 'GET'
+					urlPath('/user') {
+						queryParameters {
+							parameter 'ids': '1'
+							parameter 'ids': '2'
+						}
+					}
+				}
+				response {
+					status 200
+					body('foo')
+				}
+			}
+		when:
+			def json = toWireMockClientJsonStub(groovyDsl)
+		then:
+			AssertionUtil.assertThatJsonsAreEqual(('''
+					{
+					  "request" : {
+						"urlPath" : "/user",
+						"method" : "GET",
+						"queryParameters" : {
+						  "ids" : {
+							"equalTo" : "2"
+						  }
+						}
+					  },
+					  "response" : {
+						"status" : 200,
+						"body" : "foo"
+					  }
+					}
+					'''), json)
+		and:
+			stubMappingIsValidWireMockStub(json)
+	}
 }
