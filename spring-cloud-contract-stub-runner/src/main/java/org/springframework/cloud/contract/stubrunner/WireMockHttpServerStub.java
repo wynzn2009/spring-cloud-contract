@@ -1,10 +1,10 @@
 package org.springframework.cloud.contract.stubrunner;
 
-import org.springframework.cloud.contract.wiremock.WireMockSpring;
-import org.springframework.util.ClassUtils;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+
+import org.springframework.cloud.contract.wiremock.WireMockSpring;
+import org.springframework.util.ClassUtils;
 
 /**
  * @author Marcin Grzejszczak
@@ -19,7 +19,7 @@ class WireMockHttpServerStub implements HttpServerStub {
 
 	private WireMockConfiguration config() {
 		if (ClassUtils.isPresent("org.springframework.cloud.contract.wiremock.WireMockSpring", null)) {
-			return WireMockSpring.options();
+			return WireMockSpring.options(false);
 		}
 		return new WireMockConfiguration();
 	}

@@ -83,11 +83,22 @@ import io.undertow.Undertow.Builder;
  */
 class SpringBootHttpServerFactory implements HttpServerFactory {
 
+	private final boolean standaloneSetup;
+
+	SpringBootHttpServerFactory(boolean standaloneSetup) {
+		this.standaloneSetup = standaloneSetup;
+	}
+
+	SpringBootHttpServerFactory() {
+		this(true);
+	}
+
 	@Override
 	public HttpServer buildHttpServer(Options options,
 			AdminRequestHandler adminRequestHandler,
 			StubRequestHandler stubRequestHandler) {
-		return new SpringBootHttpServer(options, adminRequestHandler, stubRequestHandler);
+		return new SpringBootHttpServer(options, adminRequestHandler, stubRequestHandler,
+				this.standaloneSetup);
 	}
 
 }
@@ -96,22 +107,29 @@ class SpringBootHttpServer
 		implements HttpServer, ApplicationListener<ApplicationPreparedEvent> {
 
 	private volatile boolean running;
-	private Options options;
-	private AdminRequestHandler adminRequestHandler;
-	private StubRequestHandler stubRequestHandler;
+	private final Options options;
+	private final AdminRequestHandler adminRequestHandler;
+	private final StubRequestHandler stubRequestHandler;
 	private ConfigurableApplicationContext context;
+	private final boolean standaloneSetup;
 
 	public SpringBootHttpServer(Options options, AdminRequestHandler adminRequestHandler,
-			StubRequestHandler stubRequestHandler) {
+			StubRequestHandler stubRequestHandler, boolean standaloneSetup) {
 		this.options = options;
 		this.adminRequestHandler = adminRequestHandler;
 		this.stubRequestHandler = stubRequestHandler;
+		this.standaloneSetup = standaloneSetup;
 	}
 
 	@Override
 	public void start() {
-		this.context = new SpringApplicationBuilder(WiremockServerConfiguration.class)
-				.logStartupInfo(false).bannerMode(Mode.OFF).listeners(this).run();
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(
+				WiremockServerConfiguration.class).logStartupInfo(false)
+				.bannerMode(Mode.OFF).listeners(this);
+		if (!this.standaloneSetup) {
+			builder.properties("spring.config.name=nonexistingpropertyname");
+		}
+		this.context = builder.run();
 		this.running = true;
 	}
 

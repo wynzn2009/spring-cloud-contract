@@ -18,13 +18,13 @@ package org.springframework.cloud.contract.wiremock;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
 import org.junit.Assert;
 import org.springframework.util.ClassUtils;
-
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 
 /**
  * Convenience factory class for a {@link WireMockConfiguration} that knows how to use
@@ -46,6 +46,10 @@ public abstract class WireMockSpring {
 	private static boolean initialized = false;
 
 	public static WireMockConfiguration options() {
+		return options(true);
+	}
+
+	public static WireMockConfiguration options(boolean standaloneSetup) {
 		if (!initialized) {
 			if (ClassUtils.isPresent("org.apache.http.conn.ssl.NoopHostnameVerifier",
 					null)) {
@@ -66,7 +70,7 @@ public abstract class WireMockSpring {
 			initialized = true;
 		}
 		WireMockConfiguration config = new WireMockConfiguration();
-		config.httpServerFactory(new SpringBootHttpServerFactory());
+		config.httpServerFactory(new SpringBootHttpServerFactory(standaloneSetup));
 		return config;
 	}
 
