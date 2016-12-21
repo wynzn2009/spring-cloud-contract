@@ -19,6 +19,7 @@ package org.springframework.cloud.contract.verifier.builder
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.verifier.config.ContractVerifierConfigProperties
 import org.springframework.cloud.contract.verifier.dsl.WireMockStubVerifier
+import org.springframework.cloud.contract.verifier.util.SyntaxChecker
 import spock.lang.Issue
 import spock.lang.Shared
 import spock.lang.Specification
@@ -29,7 +30,7 @@ import java.util.regex.Pattern
 /**
  * @author Jakub Kubrynski, codearte.io
  */
-class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier {
+class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStubVerifier, SyntaxChecker {
 
 	@Shared ContractVerifierConfigProperties properties = new ContractVerifierConfigProperties(
 			assertJsonSize: true
@@ -126,6 +127,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property2").isEqualTo("b")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -159,6 +162,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property3").isEqualTo(false)""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -194,6 +199,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -232,6 +239,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property2").contains("b").isEqualTo("sthElse")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -261,6 +270,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains(bodyString)
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """.body('''{\"items\":[\"HOP\"]}''')"""
@@ -288,6 +299,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		builder.appendTo(blockBuilder)
 		then:
 		blockBuilder.toString().contains(bodyString)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
 		where:
@@ -323,6 +336,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").field(14).isEqualTo(0.0)""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -356,6 +371,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).array().contains("property1").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -388,6 +405,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).array("property1").contains("property3").isEqualTo("test2")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -420,6 +439,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -456,6 +477,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -488,6 +511,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property1").isEqualTo("a")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -520,6 +545,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		blockBuilder.toString().contains("""assertThatJson(parsedJson).field("property").matches("\\\\d+")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -575,6 +602,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -631,6 +660,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains('assertThatJson(parsedJson).field("property2").isEqualTo("b")')
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -658,6 +689,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains(bodyString)
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ".body('''''')"
@@ -686,6 +719,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains(bodyEvaluationString)
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyDefinitionString                                     | bodyEvaluationString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | 'def responseBody = (response.body.asString())'          | 'responseBody == "test"'
@@ -725,6 +760,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains(headerEvaluationString)
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | headerEvaluationString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('http://localhost/partners/[0-9]+/users/[0-9]+')'''
@@ -764,6 +801,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains(headerEvaluationString)
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | headerEvaluationString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '''response.header('Location') ==~ java.util.regex.Pattern.compile('^((http[s]?|ftp):\\/)\\/?([^:\\/\\s]+)(:[0-9]{1,5})?/partners/[0-9]+/users/[0-9]+')'''
@@ -805,6 +844,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains("""assertThatJson(parsedJson).array("errors").contains("message").isEqualTo("incorrect_format")""")
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -838,6 +879,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains('''/partners/11/agents/11/customers/09665703Z''')
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -877,6 +920,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		def test = blockBuilder.toString()
 		then:
 		test.contains("""assertThatJson(parsedJson).field("message").matches("User not found by email = \\\\\\\\[[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\\\\\.[a-zA-Z]{2,4}\\\\\\\\]")""")
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -897,6 +942,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		!test.contains('''REGEXP''')
 		!test.contains('''OPTIONAL''')
 		!test.contains('''OptionalProperty''')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		contractDsl << [dslWithOptionals, dslWithOptionalsInString]
 	}
@@ -915,6 +962,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		!test.contains('''REGEXP''')
 		!test.contains('''OPTIONAL''')
 		!test.contains('''OptionalProperty''')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		contractDsl << [dslWithOptionals, dslWithOptionalsInString]
 	}
@@ -966,6 +1015,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		assertionStrings.each { String assertionString ->
 			assert test.contains(assertionString)
 		}
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | assertionStrings
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ['''assertThatRejectionReasonIsNull(parsedJson.read('$.rejectionReason'))''', '''assertThatLocationIsNull(response.header('Location'))''']
@@ -1033,6 +1084,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		test.contains bodyString
 		!test.contains("clientValue")
 		!test.contains("cursor")
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '"street":"Light Street"'
@@ -1072,6 +1125,8 @@ class MockMvcMethodBodyBuilderSpec extends Specification implements WireMockStub
 		def test = blockBuilder.toString()
 		then:
 		!test.contains("\\u041f")
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1099,6 +1154,8 @@ World.''')
 		def test = blockBuilder.toString()
 		then:
 		test.contains(bodyString)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | """'''hello,
@@ -1135,6 +1192,8 @@ World.'''"""
 		for (String requestString : requestStrings) {
 			test.contains(requestString)
 		}
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | requestStrings
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | ["""'content-type', 'multipart/form-data;boundary=AaB03x'""",
@@ -1173,6 +1232,8 @@ World.'''"""
 		def test = blockBuilder.toString()
 		then:
 		test.contains('.multiPart')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1211,6 +1272,8 @@ World.'''"""
 		def test = blockBuilder.toString()
 		then:
 		test.contains('''assertThatJson(parsedJson).array("authorities").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+\\$").value()''')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#216')
@@ -1245,6 +1308,8 @@ World.'''"""
 		def test = blockBuilder.toString()
 		then:
 		test.contains('''assertThatJson(parsedJson).array("authorities").arrayField().matches("^[a-zA-Z0-9_\\\\- ]+$").value()''')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	def "should work with execution property"() {
@@ -1271,6 +1336,8 @@ World.'''"""
 		then:
 		!test.contains('''assertThatJson(parsedJson).field("rejectionReason").isEqualTo("assertThatRejectionReasonIsNull("''')
 		test.contains('''assertThatRejectionReasonIsNull(''')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1306,6 +1373,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatJson(parsedJson).array().contains("id").matches("[0-9]+")')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('266')
@@ -1335,6 +1404,8 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Stream").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("SpringBoot").value()')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1371,6 +1442,8 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Java").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("Stream").value()')
 			test.contains('assertThatJson(parsedJson).arrayField().contains("SpringBoot").value()')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1403,6 +1476,8 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Java").value()')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Spring").value()')
 			test.contains('assertThatJson(parsedJson).array().arrayField().isEqualTo("Boot").value()')
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1431,6 +1506,8 @@ World.'''"""
 		test.contains(bodyDefinitionString)
 		and:
 		stubMappingIsValidWireMockStub(contractDsl)
+		and:
+		checkIfTestIsParsable(blockBuilder.toString())
 		where:
 		methodBuilderName           | methodBuilder                                                               | bodyDefinitionString
 		"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) } | '.when().async()'
@@ -1464,6 +1541,8 @@ World.'''"""
 		then:
 			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("BANK").value()')
 			test.contains('assertThatJson(parsedJson).array("partners").array("payment_methods").arrayField().isEqualTo("CASH").value()')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilderName           | methodBuilder
 			"MockMvcSpockMethodBuilder" | { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
@@ -1490,6 +1569,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatJson(parsedJson).field("message").matches("^(?!\\\\s*\\$).+")')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	Contract dslForDocs =
@@ -1580,6 +1661,8 @@ World.'''"""
 			strippedTest.contains("""response.header('Content-Type') ==~ java.util.regex.Pattern.compile('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')""")
 			"application/vnd.fraud.v1+json;charset=UTF-8".matches('application/vnd\\.fraud\\.v1\\+json.*')
 			strippedTest.contains("""assertThatJson(parsedJson).field("responseElement").matches("[0-9]{7}")""")
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#85')
@@ -1607,6 +1690,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('assertThatRejectionReasonIsNull(parsedJson.read(\'$.rejectionReason.title\'))')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#111')
@@ -1637,6 +1722,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('.header("authorization", getOAuthTokenHeader())')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#150')
@@ -1660,6 +1747,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains("responseBody ==~ java.util.regex.Pattern.compile('.*')")
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#150')
@@ -1683,6 +1772,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains("foo(responseBody)")
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#149')
@@ -1713,6 +1804,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('.header("authorization", getOAuthTokenHeader())')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 	}
 
 	@Issue('#149')
@@ -1770,6 +1863,8 @@ World.'''"""
 			test.contains('assertThatJson(parsedJson).field("ip").matches("([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])\\\\.([01]?\\\\d\\\\d?|2[0-4]\\\\d|25[0-5])")')
 			test.contains('assertThatJson(parsedJson).field("uuid").matches("[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}")')
 			!test.contains('cursor')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
 							  { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
@@ -1802,6 +1897,8 @@ World.'''"""
 			def test = blockBuilder.toString()
 		then:
 			test.contains('application/vnd\\\\.fraud\\\\.v1\\\\+json.*')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
 						{ Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
@@ -1837,8 +1934,44 @@ World.'''"""
 		then:
 			!test.contains('org.springframework.cloud.contract.spec.internal.OptionalProperty')
 			test.contains('(([0-9]{1,10}))?')
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
 		where:
 			methodBuilder << [{ Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties)},
 						{ Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties)}]
+	}
+
+	@Issue('#172')
+	@Unroll
+	def "should resolve plain text properly via headers"() {
+		given:
+		Contract contractDsl = Contract.make {
+				request {
+					method 'GET'
+					url("/foo")
+				}
+				response {
+					status(200)
+					body '{"a":1}\n{"a":2}'
+					headers {
+						contentType(textPlain())
+					}
+				}
+			}
+			MethodBodyBuilder builder = methodBuilder(contractDsl)
+			BlockBuilder blockBuilder = new BlockBuilder(" ")
+		when:
+			builder.appendTo(blockBuilder)
+			def test = blockBuilder.toString()
+		then:
+			!test.contains('assertThatJson(parsedJson).field("a").isEqualTo(1)')
+			test.contains(expectedAssertion)
+		and:
+			checkIfTestIsParsable(blockBuilder.toString())
+		where:
+			//order is inverted cause Intellij didn't parse this properly
+			expectedAssertion                                                  || methodBuilder
+			'''responseBody == "{\\"a\\":1}\n{\\"a\\":2}"'''                   || { Contract dsl -> new MockMvcSpockMethodRequestProcessingBodyBuilder(dsl, properties) }
+			'''assertThat(responseBody).isEqualTo("{\\"a\\":1}\n{\\"a\\":2}''' || { Contract dsl -> new MockMvcJUnitMethodBodyBuilder(dsl, properties) }
 	}
 }
