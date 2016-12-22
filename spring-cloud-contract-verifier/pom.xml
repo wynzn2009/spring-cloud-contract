@@ -106,6 +106,12 @@
 			<artifactId>spring-mock-mvc</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mdkt.compiler</groupId>
+			<artifactId>InMemoryJavaCompiler</artifactId>
+			<version>1.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
